@@ -257,6 +257,68 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          <div class="col-md-6">
             <div class="box">
                <div class="box-header with-border">
+                  <h3 class="box-title">TOP CLIENTES desde {$fsc->desde} hasta {$fsc->hasta}</h3>
+                  <div class="box-tools pull-right">
+                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                     </button>
+                  </div>
+               </div>
+               <div class="box-body">
+                  <table id="topclientes" class="table table-bordered table-striped">
+                     <thead>
+                        <tr>
+                           <th width="80%">CLIENTE</th>
+                           <th width="20%" class="text-right">Importe</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {loop="$fsc->topclientes"}
+                        <tr>
+                           <td>
+                               <a href="{$value->url}">{$value->codcliente} {$value->nombrecliente}
+                               </a>
+                           </td>
+                           <td class="text-right">{$fsc->show_precio($value->totaleuros)}</td>
+                        </tr>
+                        {/loop}
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+         <div class="col-md-6">
+            <div class="box">
+               <div class="box-header with-border">
+                  <h3 class="box-title">TOP PROVEEDORES {$fsc->desde} hasta {$fsc->hasta}</h3>
+               </div>
+               <div class="box-body">
+                  <table id="topproveedores" class="table table-bordered table-striped">
+                     <thead>
+                        <tr>
+                           <th width="80%">PROVEEDOR</th>
+                           <th width="20%" class="text-right">Importe</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {loop="$fsc->topproveedores"}
+                        <tr>
+                           <td>
+                              <a href="{$value->url}">{$value->codproveedor} {$value->nombreproveedor}
+                              </a>
+                           </td>
+                           <td class="text-right">{$fsc->show_precio($value->totaleuros)}</td>
+                        </tr>
+                        {/loop}
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+   </div>
+   <div class="row">
+         <div class="col-md-6">
+            <div class="box">
+               <div class="box-header with-border">
                   <h3 class="box-title">Albaranes desde {$fsc->desde} hasta {$fsc->hasta}</h3>
                   <div class="box-tools pull-right">
                      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -558,6 +620,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            "lengthChange": false,
            "searching": true,
            "ordering": true,
+           "info": true,
+           "autoWidth": false,
+           'pageLength': 5,
+           "language": {
+           "url": "//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json"
+           },
+   });
+   });</script>
+<script>
+   $(function () {
+   $('#topclientes,#topproveedores').DataTable({
+           "paging": true,
+           "lengthChange": false,
+           "searching": true,
+           "ordering": false,
            "info": true,
            "autoWidth": false,
            'pageLength': 5,
