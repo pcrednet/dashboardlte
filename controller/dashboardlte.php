@@ -76,6 +76,8 @@ class dashboardlte extends fs_controller
    public $show_presped;
    public $show_servicios;
    public $show_tesoreria;
+   public $topclientes;
+   public $topproveedores;
    
    public function __construct()
    {
@@ -158,6 +160,8 @@ class dashboardlte extends fs_controller
       {
          $this->mostrar_albaranes();
          $this->mostrar_facturas();
+         $this->top_clientes();
+         $this->top_proveedores();
          $this->mostrar_facturasprov();
          $this->totales();
          
@@ -183,6 +187,38 @@ class dashboardlte extends fs_controller
    {
       $fac0 = new factura_cliente();
       $this->facturas = $fac0->all_desde($this->desde, $this->hasta);
+   }
+
+   private function top_clientes()
+   {
+      $sql = "SELECT *,SUM(totaleuros) FROM facturascli"
+              . " where fecha >= ".$this->empresa->var2str($this->desde)
+              . " AND fecha <= ".$this->empresa->var2str($this->hasta).
+              " GROUP BY codcliente  ORDER BY SUM(totaleuros) DESC;";
+      $data = $this->db->select($sql);
+      if($data)
+      {
+         foreach($data as $f)
+         {
+            $this->topclientes[] = new \clientetop($f);
+         }
+      }
+   }
+
+   private function top_proveedores()
+   {
+      $sql = "SELECT *,SUM(totaleuros) FROM facturasprov"
+              . " where fecha >= ".$this->empresa->var2str($this->desde)
+              . " AND fecha <= ".$this->empresa->var2str($this->hasta).
+              " GROUP BY codproveedor  ORDER BY SUM(totaleuros) DESC;";
+      $data = $this->db->select($sql);
+      if($data)
+      {
+         foreach($data as $f)
+         {
+            $this->topproveedores[] = new \proveedorestop($f);
+         }
+      }
    }
 
    private function mostrar_facturasprov()
@@ -520,4 +556,34 @@ class dashboardlte extends fs_controller
       }
    }
 
+}
+
+class clientetop {
+    public $codcliente;
+    public $nombrecliente;
+    public $totaleuros;
+    public $url;
+
+    public function __construct($f = FALSE)
+    {
+       $this->codcliente = $f['codcliente'];
+       $this->nombrecliente = $f['nombrecliente'];
+       $this->totaleuros = floatval($f['SUM(totaleuros)']);
+       $this->url = 'index.php?page=ventas_cliente&cod='.$this->codcliente;
+    }
+}
+
+class proveedorestop {
+    public $codproveedor;
+    public $nombreproveedor;
+    public $totaleuros;
+    public $url;
+
+    public function __construct($f = FALSE)
+    {
+       $this->codproveedor = $f['codproveedor'];
+       $this->nombreproveedor = $f['nombre'];
+       $this->totaleuros = floatval($f['SUM(totaleuros)']);
+       $this->url = 'index.php?page=compras_proveedor&cod='.$this->codproveedor;
+    }
 }
